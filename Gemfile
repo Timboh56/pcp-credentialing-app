@@ -10,7 +10,7 @@ gem "puma", "~> 6.4"                      # App server
 gem "bootsnap", require: false            # Faster boot times
 
 # ── Auth ─────────────────────────────────────────────────────
-gem "devise", "~> 4.9"                    # Authentication
+gem "devise", "~> 5.0"                    # Authentication
 gem "pundit", "~> 2.3"                    # Authorization / policies
 
 # ── Multi-tenancy ─────────────────────────────────────────────
