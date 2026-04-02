@@ -1,11 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  # Authenticated root → dashboard; unauthenticated → login
-  authenticate :user do
-    root "dashboard#index", as: :authenticated_root
-  end
-  root "devise/sessions#new"
+  root "pages#home"
+
+  # Named route used for post-login redirect and nav links
+  get "/dashboard", to: "dashboard#index", as: :authenticated_root
 
   resources :pcp_credentials
 

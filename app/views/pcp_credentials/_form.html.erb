@@ -578,7 +578,8 @@
 
 <%# ── Work History Modal ──────────────────────────────────────── %>
 <div id="wh-modal"
-     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+     class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
+     style="background-color: rgba(0,0,0,0.5)">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
     <h3 class="text-base font-semibold text-gray-900 mb-5">Add Work History</h3>
 
@@ -637,8 +638,9 @@
           class: "px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition" %>
     <button type="submit" form="pcp-credential-form" id="form-submit-btn"
             disabled
-            class="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
-      <%= credential.new_record? ? "Submit Application" : "Save Changes" %>
+            class="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm cursor-pointer"
+            style="opacity:0.4;cursor:not-allowed">
+      Submit
     </button>
   </div>
 </div>
@@ -655,7 +657,9 @@
     var allFilled = Array.from(required).every(function (el) {
       return el.value.trim() !== "";
     });
-    submitBtn.disabled = !allFilled;
+    submitBtn.disabled          = !allFilled;
+    submitBtn.style.opacity     = allFilled ? "" : "0.4";
+    submitBtn.style.cursor      = allFilled ? "" : "not-allowed";
   }
 
   if (form && submitBtn) {

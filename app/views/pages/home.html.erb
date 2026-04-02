@@ -1,0 +1,213 @@
+<%# ── Nav ──────────────────────────────────────────────────────── %>
+<header class="bg-white border-b border-gray-100 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center justify-center w-9 h-9 bg-blue-600 rounded-lg">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <span class="text-lg font-bold text-gray-900 tracking-tight">PCP Credentialing</span>
+    </div>
+
+    <nav class="flex items-center gap-6">
+      <a href="#features" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">Features</a>
+      <a href="#how-it-works" class="text-sm font-medium text-gray-500 hover:text-gray-900 transition">How It Works</a>
+      <%= link_to "Sign in", new_user_session_path,
+            class: "text-sm font-medium text-gray-700 hover:text-gray-900 transition" %>
+      <%= link_to "Get Started", new_user_registration_path,
+            class: "px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm" %>
+    </nav>
+  </div>
+</header>
+
+<%# ── Hero ─────────────────────────────────────────────────────── %>
+<section class="bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 flex flex-col lg:flex-row items-center gap-16">
+
+    <%# Left copy %>
+    <div class="flex-1 text-center lg:text-left">
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-xs font-semibold text-blue-700 mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+        Built for Healthcare Providers
+      </span>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tight mb-6">
+        Credentialing,<br>
+        <span class="text-blue-600">simplified.</span>
+      </h1>
+      <p class="text-lg text-gray-500 leading-relaxed max-w-xl mb-10">
+        Manage every PCP credentialing application in one place — from initial submission
+        through licensure, insurance, and approval — with real-time status tracking and
+        automatic reminders before anything expires.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+        <%= link_to "Get Started Free", new_user_registration_path,
+              class: "w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md" %>
+        <%= link_to "Sign In", new_user_session_path,
+              class: "w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl transition" %>
+      </div>
+    </div>
+
+    <%# Right illustration %>
+    <div class="flex-1 w-full max-w-lg lg:max-w-none">
+      <div class="bg-gray-50 rounded-3xl border border-gray-200 p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-5">
+          <span class="text-sm font-semibold text-gray-700">Active Applications</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">4 pending</span>
+        </div>
+        <div class="space-y-3">
+          <% [
+               { name: "Dr. Sarah Chen, MD",  specialty: "Cardiology",      status: "Under Review", color: "bg-yellow-100 text-yellow-800"  },
+               { name: "Dr. Marcus Webb, DO", specialty: "Family Medicine",  status: "Approved",     color: "bg-green-100 text-green-800"   },
+               { name: "Dr. Priya Nair, NP",  specialty: "Pediatrics",       status: "Pending",      color: "bg-blue-100 text-blue-800"     },
+               { name: "Dr. James Ortiz, PA", specialty: "Internal Med.",    status: "Submitted",    color: "bg-purple-100 text-purple-800" },
+             ].each do |row| %>
+            <div class="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-gray-100 shadow-sm">
+              <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                <span class="text-xs font-bold text-white"><%= row[:name].split[1][0] %></span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-900 truncate"><%= row[:name] %></p>
+                <p class="text-xs text-gray-400"><%= row[:specialty] %></p>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold flex-shrink-0 <%= row[:color] %>">
+                <%= row[:status] %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+        <div class="mt-5 grid grid-cols-3 gap-3">
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center">
+            <p class="text-xl font-black text-blue-600">12</p>
+            <p class="text-xs text-gray-400 mt-0.5">Total</p>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center">
+            <p class="text-xl font-black text-green-500">8</p>
+            <p class="text-xs text-gray-400 mt-0.5">Approved</p>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3 text-center">
+            <p class="text-xl font-black text-yellow-800">2</p>
+            <p class="text-xs text-gray-400 mt-0.5">Expiring</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<%# ── Features ─────────────────────────────────────────────────── %>
+<section id="features" class="bg-gray-50 border-t border-gray-100 py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mb-4">Everything you need, nothing you don't</h2>
+      <p class="text-lg text-gray-500 max-w-2xl mx-auto">One platform to manage the full credentialing lifecycle for your entire provider network.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% [
+           {
+             icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>',
+             title: "Centralized Applications",
+             body:  "Store every credentialing application — personal info, licensure, DEA, malpractice, and more — in a single structured record."
+           },
+           {
+             icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+             title: "Expiration Tracking",
+             body:  "Get ahead of license, DEA, and insurance expirations with at-a-glance status indicators and expiring-soon alerts."
+           },
+           {
+             icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>',
+             title: "Compliance Ready",
+             body:  "Track board certifications, Medicare and Medicaid identifiers, hospital affiliations, and more to stay audit-ready."
+           },
+           {
+             icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>',
+             title: "Work History",
+             body:  "Capture a structured employment history for each provider, with employer, role, and date ranges all in one place."
+           },
+           {
+             icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7M4 7c0-2 1-3 3-3h10c2 0 3 1 3 3M4 7h16M10 11v6M14 11v6"/>',
+             title: "Document Management",
+             body:  "Attach CVs, certificates, and supporting documents directly to each application — no more hunting through email."
+           },
+           {
+             icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>',
+             title: "Auto-Save Drafts",
+             body:  "Never lose progress. Applications save automatically as you type so providers can pick up right where they left off."
+           },
+         ].each do |feat| %>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <%= raw feat[:icon] %>
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-gray-900 mb-2"><%= feat[:title] %></h3>
+          <p class="text-sm text-gray-500 leading-relaxed"><%= feat[:body] %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ── How It Works ─────────────────────────────────────────────── %>
+<section id="how-it-works" class="bg-white border-t border-gray-100 py-24">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mb-4">Up and running in minutes</h2>
+      <p class="text-lg text-gray-500">No training required — the flow is intuitive from day one.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+      <% [
+           { step: "01", title: "Create an account",  body: "Sign up in seconds. No credit card required." },
+           { step: "02", title: "Add your providers", body: "Start a new credentialing application for each PCP and fill in the details at your own pace." },
+           { step: "03", title: "Track & submit",     body: "Monitor status, catch expiring credentials, and submit completed applications for review." },
+         ].each do |s| %>
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center mx-auto mb-5 shadow-md">
+            <span class="text-lg font-black text-white"><%= s[:step] %></span>
+          </div>
+          <h3 class="text-base font-semibold text-gray-900 mb-2"><%= s[:title] %></h3>
+          <p class="text-sm text-gray-500 leading-relaxed"><%= s[:body] %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ── CTA Banner ───────────────────────────────────────────────── %>
+<section class="bg-blue-600 py-20">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl sm:text-4xl font-black text-white mb-4">Ready to streamline your credentialing?</h2>
+    <p class="text-lg text-blue-100 mb-10">Join healthcare organizations already using PCP Credentialing to keep their providers compliant.</p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <%= link_to "Get Started Free", new_user_registration_path,
+            class: "w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-blue-600 bg-white hover:bg-blue-50 rounded-xl transition shadow-md" %>
+      <%= link_to "Sign In", new_user_session_path,
+            class: "w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white border border-white hover:bg-blue-700 rounded-xl transition" %>
+    </div>
+  </div>
+</section>
+
+<%# ── Footer ───────────────────────────────────────────────────── %>
+<footer class="bg-gray-900 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2.5">
+      <div class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-lg">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+      </div>
+      <span class="text-sm font-semibold text-white">PCP Credentialing</span>
+    </div>
+    <p class="text-xs text-gray-500">&copy; <%= Date.today.year %> PCP Credentialing. All rights reserved.</p>
+    <div class="flex items-center gap-5">
+      <%= link_to "Sign In",     new_user_session_path,      class: "text-xs text-gray-400 hover:text-white transition" %>
+      <%= link_to "Get Started", new_user_registration_path, class: "text-xs text-gray-400 hover:text-white transition" %>
+    </div>
+  </div>
+</footer>
