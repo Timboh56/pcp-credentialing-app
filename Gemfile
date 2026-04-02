@@ -51,7 +51,7 @@ gem "interactor", "~> 3.1"               # Service objects / interactors
 gem "dry-validation", "~> 1.10"          # Schema validation (CAQH imports etc.)
 gem "phonelib"                            # Phone number validation
 gem "validates_zipcode"                   # US zip code validation
-gem "money-rails", "~> 1.15"            # If you ever surface pricing/fees
+gem "money-rails", "~> 3.0"             # If you ever surface pricing/fees
 
 group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
