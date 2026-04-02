@@ -1,0 +1,792 @@
+<% # Shared CSS tokens
+   input_cls  = "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+   select_cls = "w-full appearance-none rounded-lg border border-gray-300 bg-white pl-10 pr-9 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition cursor-pointer"
+   date_cls   = "w-full rounded-lg border border-gray-300 bg-white pl-10 pr-9 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition cursor-pointer"
+   label_cls  = "block text-sm font-medium text-gray-700 mb-1.5"
+   section_cls = "bg-white rounded-2xl border border-gray-200 shadow-sm p-6"
+   heading_cls = "text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-100 uppercase tracking-wide"
+%>
+
+<%# ── SVG snippets ────────────────────────────────────────────── %>
+<% chevron_svg = capture do %>
+  <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>
+  </div>
+<% end %>
+
+<% cal_svg = capture do %>
+  <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    </svg>
+  </div>
+<% end %>
+
+<% list_svg = capture do %>
+  <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
+    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 10h16M4 14h10"/>
+    </svg>
+  </div>
+<% end %>
+
+<%= form_with model: credential, id: "pcp-credential-form", class: "space-y-6 pb-24" do |f| %>
+  <% if credential.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-red-700 mb-1"><%= credential.errors.count %> error(s) prevented this form from being saved:</p>
+      <ul class="list-disc list-inside text-sm text-red-600 space-y-0.5">
+        <% credential.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# 1. Personal Information %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <h2 class="<%= heading_cls %>">Personal Information</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div>
+        <%= f.label :first_name, class: label_cls %>
+        <%= f.text_field :first_name, placeholder: "Jane", required: true, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :middle_initial, class: label_cls %>
+        <%= f.text_field :middle_initial, maxlength: 1, placeholder: "M", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :last_name, class: label_cls %>
+        <%= f.text_field :last_name, placeholder: "Smith", required: true, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :title_degree, "Degree / Title", class: label_cls %>
+        <div class="relative custom-select">
+          <%= raw list_svg %>
+          <%= f.select :title_degree,
+                PcpCredential.title_degrees.keys.map { |k| [k.upcase, k] },
+                { include_blank: "Select degree…" },
+                class: select_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :gender, class: label_cls %>
+        <div class="relative custom-select">
+          <%= raw list_svg %>
+          <%= f.select :gender,
+                PcpCredential.genders.keys.map { |k| [k.humanize, k] },
+                { include_blank: "Select gender…" },
+                class: select_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :practitioner_birth_date, "Date of Birth", class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :practitioner_birth_date,
+                value: credential.practitioner_birth_date&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :email, class: label_cls %>
+        <%= f.email_field :email, placeholder: "jane@example.com", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :phone_number, class: label_cls %>
+        <%= f.telephone_field :phone_number, placeholder: "(555) 000-0000", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :ssn, "SSN", class: label_cls %>
+        <%= f.text_field :ssn, placeholder: "XXX-XX-XXXX", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :tax_id, "Tax ID", class: label_cls %>
+        <%= f.text_field :tax_id, placeholder: "XX-XXXXXXX", class: input_cls %>
+      </div>
+
+    </div>
+  </div>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# 2. Professional Information %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <h2 class="<%= heading_cls %>">Professional Information</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div>
+        <%= f.label :npi, "NPI", class: label_cls %>
+        <%= f.text_field :npi, placeholder: "1234567890", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :practitioner_number, class: label_cls %>
+        <%= f.text_field :practitioner_number, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :practitioner_role, class: label_cls %>
+        <div class="relative custom-select">
+          <%= raw list_svg %>
+          <%= f.select :practitioner_role,
+                PcpCredential.practitioner_roles.keys.map { |k| [k.humanize, k] },
+                { include_blank: "Select role…" },
+                class: select_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :speciality, "Primary Specialty", class: label_cls %>
+        <div class="relative custom-select">
+          <%= raw list_svg %>
+          <%= f.select :speciality,
+                PcpCredential.specialities.keys.map { |k| [k.humanize.titleize, k] },
+                { include_blank: "Select specialty…" },
+                class: select_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :secondary_speciality, "Secondary Specialty", class: label_cls %>
+        <%= f.text_field :secondary_speciality, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :taxonomy_code, class: label_cls %>
+        <%= f.text_field :taxonomy_code, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :years_practicing, class: label_cls %>
+        <%= f.number_field :years_practicing, min: 0, placeholder: "0", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :lowest_age_accepted, class: label_cls %>
+        <%= f.number_field :lowest_age_accepted, min: 0, placeholder: "0", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :highest_age_accepted, class: label_cls %>
+        <%= f.number_field :highest_age_accepted, min: 0, placeholder: "120", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :medical_school, class: label_cls %>
+        <%= f.text_field :medical_school, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :residency, class: label_cls %>
+        <%= f.text_field :residency, class: input_cls %>
+      </div>
+
+      <div class="flex items-center gap-3 pt-5">
+        <%= f.check_box :accepting_new_patients,
+              class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" %>
+        <%= f.label :accepting_new_patients, "Accepting New Patients",
+              class: "text-sm font-medium text-gray-700 cursor-pointer" %>
+      </div>
+
+    </div>
+
+    <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div>
+        <%= f.label :primary_language, class: label_cls %>
+        <%= f.text_field :primary_language, placeholder: "English", class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :secondary_language, class: label_cls %>
+        <%= f.text_field :secondary_language, placeholder: "Spanish", class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :third_language, class: label_cls %>
+        <%= f.text_field :third_language, class: input_cls %>
+      </div>
+    </div>
+
+    <div class="mt-5">
+      <%= f.label :work_history_notes, "Work History / Notes", class: label_cls %>
+      <%= f.text_area :work_history_notes, rows: 4,
+            class: "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none" %>
+    </div>
+  </div>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# Work History %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <div class="flex items-center justify-between pb-3 mb-5 border-b border-gray-100">
+      <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Work History</h2>
+      <button type="button" id="add-work-history-btn"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Add Work History
+      </button>
+    </div>
+
+    <div id="work-history-list" class="space-y-3">
+      <% credential.work_histories.each_with_index do |wh, i| %>
+        <div class="work-history-card flex items-center gap-4 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200"
+             id="wh-existing-<%= i %>">
+          <input type="hidden" name="pcp_credential[work_histories_attributes][<%= i %>][id]"        value="<%= wh.id %>">
+          <input type="hidden" name="pcp_credential[work_histories_attributes][<%= i %>][employer]"   value="<%= wh.employer %>">
+          <input type="hidden" name="pcp_credential[work_histories_attributes][<%= i %>][position]"   value="<%= wh.position %>">
+          <input type="hidden" name="pcp_credential[work_histories_attributes][<%= i %>][work_start]" value="<%= wh.work_start %>">
+          <input type="hidden" name="pcp_credential[work_histories_attributes][<%= i %>][work_end]"   value="<%= wh.work_end %>">
+          <input type="hidden" name="pcp_credential[work_histories_attributes][<%= i %>][_destroy]"   value="0" class="wh-destroy-field">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-900 truncate"><%= wh.employer %> &mdash; <%= wh.position %></p>
+            <p class="text-xs text-gray-500 mt-0.5">
+              <%= wh.work_start&.strftime("%b %Y") || "&mdash;".html_safe %> &ndash; <%= wh.work_end&.strftime("%b %Y") || "Present" %>
+            </p>
+          </div>
+          <button type="button"
+                  class="delete-existing-wh flex-shrink-0 text-sm font-medium text-red-600 hover:text-red-700 transition"
+                  data-card-id="wh-existing-<%= i %>">
+            Delete
+          </button>
+        </div>
+      <% end %>
+    </div>
+
+    <p id="no-wh-msg" class="text-sm text-gray-400 italic mt-3 <%= credential.work_histories.any? ? 'hidden' : '' %>">
+      No work history added yet.
+    </p>
+  </div>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# 3. Licensure & Certifications %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <h2 class="<%= heading_cls %>">Licensure &amp; Certifications</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div>
+        <%= f.label :medical_license_number, "Medical License #", class: label_cls %>
+        <%= f.text_field :medical_license_number, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :medical_license_state, "License State", class: label_cls %>
+        <div class="relative custom-select">
+          <%= raw list_svg %>
+          <%= f.select :medical_license_state,
+                PcpCredential.medical_license_states.keys.map { |k| [k.upcase, k] },
+                { include_blank: "Select state…" },
+                class: select_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :medical_license_expiration_date, "License Expiration", class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :medical_license_expiration_date,
+                value: credential.medical_license_expiration_date&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :dea_number, "DEA Number", class: label_cls %>
+        <%= f.text_field :dea_number, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :dea_state, "DEA State", class: label_cls %>
+        <div class="relative custom-select">
+          <%= raw list_svg %>
+          <%= f.select :dea_state,
+                PcpCredential.dea_states.keys.map { |k| [k.upcase, k] },
+                { include_blank: "Select state…" },
+                class: select_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :expiration_date, "DEA Expiration", class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :expiration_date,
+                value: credential.expiration_date&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :medicare_identifier, "Medicare ID", class: label_cls %>
+        <%= f.text_field :medicare_identifier, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :medicaid_number, "Medicaid Number", class: label_cls %>
+        <%= f.text_field :medicaid_number, class: input_cls %>
+      </div>
+
+      <div class="flex items-center gap-3 pt-5">
+        <%= f.check_box :board_certified_status,
+              class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" %>
+        <%= f.label :board_certified_status, "Board Certified",
+              class: "text-sm font-medium text-gray-700 cursor-pointer" %>
+      </div>
+
+    </div>
+
+    <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div>
+        <%= f.label :hospital_certification_name, "Hospital Certification", class: label_cls %>
+        <%= f.text_field :hospital_certification_name, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :board_certification_type, "Board Cert. Type (Primary)", class: label_cls %>
+        <%= f.text_field :board_certification_type, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :board_certification_effective_type, "Effective Type", class: label_cls %>
+        <%= f.text_field :board_certification_effective_type, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :board_certification_effective_date, "Board Cert. Effective Date", class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :board_certification_effective_date,
+                value: credential.board_certification_effective_date&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+      <div>
+        <%= f.label :board_certification_expiration_date, "Board Cert. Expiration", class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :board_certification_expiration_date,
+                value: credential.board_certification_expiration_date&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+      <div>
+        <%= f.label :board_certification_type_secondary, "Board Cert. Type (Secondary)", class: label_cls %>
+        <%= f.text_field :board_certification_type_secondary, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :board_certification_effective_date_secondary, "Secondary Effective Date", class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :board_certification_effective_date_secondary,
+                value: credential.board_certification_effective_date_secondary&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+      <div>
+        <%= f.label :board_certification_type_expiration_date_secondary, "Secondary Expiration", class: label_cls %>
+        <%= f.text_field :board_certification_type_expiration_date_secondary, class: input_cls %>
+      </div>
+    </div>
+  </div>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# 4. Malpractice Insurance %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <h2 class="<%= heading_cls %>">Malpractice Insurance</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div>
+        <%= f.label :insurance_carrier, "Carrier", class: label_cls %>
+        <%= f.text_field :insurance_carrier, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :insurance_policy_number, "Policy Number", class: label_cls %>
+        <%= f.text_field :insurance_policy_number, class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :insurance_coverage_amount, "Coverage Amount ($)", class: label_cls %>
+        <%= f.number_field :insurance_coverage_amount, step: 0.01, min: 0, placeholder: "0.00", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :insurance_coverage_amount_aggregate, "Aggregate Coverage ($)", class: label_cls %>
+        <%= f.number_field :insurance_coverage_amount_aggregate, step: 0.01, min: 0, placeholder: "0.00", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :insurance_effective_date, "Effective Date", class: label_cls %>
+        <%= f.text_field :insurance_effective_date, placeholder: "e.g. Jan 1, 2024", class: input_cls %>
+      </div>
+
+      <div>
+        <%= f.label :insurance_expiration_date, "Expiration Date", class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :insurance_expiration_date,
+                value: credential.insurance_expiration_date&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# 5. PCP Group %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <h2 class="<%= heading_cls %>">PCP Group</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <%= f.label :pcp_group_npi, "Group NPI", class: label_cls %>
+        <%= f.text_field :pcp_group_npi, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :pcp_group_tax_id, "Group Tax ID", class: label_cls %>
+        <%= f.text_field :pcp_group_tax_id, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :pcp_group_billing_address, "Billing Address", class: label_cls %>
+        <%= f.text_field :pcp_group_billing_address, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :pcp_group_billing_phone, "Billing Phone", class: label_cls %>
+        <%= f.telephone_field :pcp_group_billing_phone, placeholder: "(555) 000-0000", class: input_cls %>
+      </div>
+    </div>
+  </div>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# 6. Documents %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <h2 class="<%= heading_cls %>">Documents</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div>
+        <%= f.label :document_1, "Document 1", class: label_cls %>
+        <%= f.text_field :document_1, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :document_2, "Document 2", class: label_cls %>
+        <%= f.text_field :document_2, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :document_3, "Document 3", class: label_cls %>
+        <%= f.text_field :document_3, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :cv, "CV", class: label_cls %>
+        <%= f.text_field :cv, class: input_cls %>
+      </div>
+      <div>
+        <%= f.label :additional_document, "Additional Document", class: label_cls %>
+        <%= f.text_field :additional_document, class: input_cls %>
+      </div>
+    </div>
+  </div>
+
+  <%# ════════════════════════════════════════════════════════════ %>
+  <%# 7. Status %>
+  <%# ════════════════════════════════════════════════════════════ %>
+  <div class="<%= section_cls %>">
+    <h2 class="<%= heading_cls %>">Status</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div>
+        <%= f.label :status, class: label_cls %>
+        <div class="relative custom-select">
+          <%= raw list_svg %>
+          <%= f.select :status,
+                PcpCredential.statuses.keys.map { |k| [k.humanize, k] },
+                { include_blank: "Select status…" },
+                class: select_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :approval_date, class: label_cls %>
+        <div class="relative">
+          <%= raw cal_svg %>
+          <%= f.text_field :approval_date,
+                value: credential.approval_date&.strftime("%Y-%m-%d"),
+                placeholder: "YYYY-MM-DD",
+                data: { datepicker: true },
+                class: date_cls %>
+          <%= raw chevron_svg %>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3 pt-1">
+        <label class="flex items-center gap-3 cursor-pointer">
+          <%= f.check_box :approved,
+                class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" %>
+          <span class="text-sm font-medium text-gray-700">Approved</span>
+        </label>
+        <label class="flex items-center gap-3 cursor-pointer">
+          <%= f.check_box :receipt_confirmed,
+                class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" %>
+          <span class="text-sm font-medium text-gray-700">Receipt Confirmed</span>
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+<% end %>
+
+<%# ── Work History Modal ──────────────────────────────────────── %>
+<div id="wh-modal"
+     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+    <h3 class="text-base font-semibold text-gray-900 mb-5">Add Work History</h3>
+
+    <div class="space-y-4">
+      <div>
+        <label class="<%= label_cls %>" for="wh-employer">Employer</label>
+        <input type="text" id="wh-employer" placeholder="Hospital / Clinic name"
+               class="<%= input_cls %>">
+      </div>
+      <div>
+        <label class="<%= label_cls %>" for="wh-position">Position</label>
+        <input type="text" id="wh-position" placeholder="e.g. Attending Physician"
+               class="<%= input_cls %>">
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="<%= label_cls %>" for="wh-work-start">Work Start</label>
+          <div class="relative">
+            <%= raw cal_svg %>
+            <input type="text" id="wh-work-start" placeholder="YYYY-MM-DD"
+                   data-datepicker="true"
+                   class="<%= date_cls %>">
+            <%= raw chevron_svg %>
+          </div>
+        </div>
+        <div>
+          <label class="<%= label_cls %>" for="wh-work-end">Work End</label>
+          <div class="relative">
+            <%= raw cal_svg %>
+            <input type="text" id="wh-work-end" placeholder="YYYY-MM-DD"
+                   data-datepicker="true"
+                   class="<%= date_cls %>">
+            <%= raw chevron_svg %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 mt-6">
+      <button type="button" id="wh-modal-cancel"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+        Cancel
+      </button>
+      <button type="button" id="wh-modal-save"
+              class="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm">
+        Save work history
+      </button>
+    </div>
+  </div>
+</div>
+
+<%# ── Fixed bottom action bar ──────────────────────────────────── %>
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-end gap-3">
+    <%= link_to "Cancel", pcp_credentials_path,
+          class: "px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition" %>
+    <button type="submit" form="pcp-credential-form" id="form-submit-btn"
+            disabled
+            class="px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
+      <%= credential.new_record? ? "Submit Application" : "Save Changes" %>
+    </button>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ── Submit button enabled/disabled ──────────────────────────
+  var form      = document.getElementById("pcp-credential-form");
+  var submitBtn = document.getElementById("form-submit-btn");
+
+  function updateSubmitState() {
+    if (!form || !submitBtn) return;
+    var required  = form.querySelectorAll("[required]");
+    var allFilled = Array.from(required).every(function (el) {
+      return el.value.trim() !== "";
+    });
+    submitBtn.disabled = !allFilled;
+  }
+
+  if (form && submitBtn) {
+    updateSubmitState();
+    form.addEventListener("input",  updateSubmitState);
+    form.addEventListener("change", updateSubmitState);
+  }
+
+  // ── Work history ─────────────────────────────────────────────
+  var whCounter = <%= credential.work_histories.count %>;
+  var modal     = document.getElementById("wh-modal");
+  var whList    = document.getElementById("work-history-list");
+  var noWhMsg   = document.getElementById("no-wh-msg");
+
+  function openModal() {
+    modal.classList.remove("hidden");
+    // Initialise flatpickr on modal date inputs if not already attached
+    ["wh-work-start", "wh-work-end"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && !el._flatpickr && typeof flatpickr !== "undefined") {
+        flatpickr(el, { dateFormat: "Y-m-d", allowInput: true });
+      }
+    });
+  }
+
+  function closeModal() {
+    modal.classList.add("hidden");
+    ["wh-employer", "wh-position", "wh-work-start", "wh-work-end"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        if (el._flatpickr) el._flatpickr.clear();
+        else el.value = "";
+      }
+    });
+  }
+
+  function updateNoWhMsg() {
+    if (!whList || !noWhMsg) return;
+    var visible = whList.querySelectorAll(".work-history-card:not(.hidden)");
+    noWhMsg.classList.toggle("hidden", visible.length > 0);
+  }
+
+  var addBtn = document.getElementById("add-work-history-btn");
+  if (addBtn) addBtn.addEventListener("click", openModal);
+
+  var cancelBtn = document.getElementById("wh-modal-cancel");
+  if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+
+  if (modal) {
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) closeModal();
+    });
+  }
+
+  var saveBtn = document.getElementById("wh-modal-save");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", function () {
+      var employer  = (document.getElementById("wh-employer").value  || "").trim();
+      var position  = (document.getElementById("wh-position").value  || "").trim();
+      var workStart = (document.getElementById("wh-work-start").value || "").trim();
+      var workEnd   = (document.getElementById("wh-work-end").value   || "").trim();
+
+      if (!employer || !position || !workStart) {
+        alert("Employer, Position, and Work Start are required.");
+        return;
+      }
+
+      var idx    = whCounter++;
+      var cardId = "wh-new-" + idx;
+      var prefix = "pcp_credential[work_histories_attributes][" + idx + "]";
+
+      function mkHidden(name, value) {
+        var inp = document.createElement("input");
+        inp.type  = "hidden";
+        inp.name  = name;
+        inp.value = value;
+        return inp;
+      }
+
+      var card = document.createElement("div");
+      card.className = "work-history-card flex items-center gap-4 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200";
+      card.id = cardId;
+
+      card.appendChild(mkHidden(prefix + "[employer]",   employer));
+      card.appendChild(mkHidden(prefix + "[position]",   position));
+      card.appendChild(mkHidden(prefix + "[work_start]", workStart));
+      card.appendChild(mkHidden(prefix + "[work_end]",   workEnd));
+
+      var info = document.createElement("div");
+      info.className = "flex-1 min-w-0";
+
+      var title = document.createElement("p");
+      title.className = "text-sm font-semibold text-gray-900 truncate";
+      title.textContent = employer + " \u2014 " + position;
+
+      var dates = document.createElement("p");
+      dates.className = "text-xs text-gray-500 mt-0.5";
+      dates.textContent = workStart + " \u2013 " + (workEnd || "Present");
+
+      info.appendChild(title);
+      info.appendChild(dates);
+      card.appendChild(info);
+
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "delete-new-wh flex-shrink-0 text-sm font-medium text-red-600 hover:text-red-700 transition";
+      delBtn.setAttribute("data-card-id", cardId);
+      delBtn.textContent = "Delete";
+      card.appendChild(delBtn);
+
+      whList.appendChild(card);
+      updateNoWhMsg();
+      closeModal();
+    });
+  }
+
+  // Delegated delete handlers
+  document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("delete-new-wh")) {
+      var card = document.getElementById(e.target.getAttribute("data-card-id"));
+      if (card) card.remove();
+      updateNoWhMsg();
+    }
+    if (e.target.classList.contains("delete-existing-wh")) {
+      var card = document.getElementById(e.target.getAttribute("data-card-id"));
+      if (card) {
+        card.querySelector(".wh-destroy-field").value = "1";
+        card.classList.add("hidden");
+      }
+      updateNoWhMsg();
+    }
+  });
+})();
+</script>

@@ -1,0 +1,98 @@
+<%# ── Auto-save toast ─────────────────────────────────────────── %>
+<div id="autosave-toast"
+     style="display:none; top:50px; left:50%; transform:translateX(-50%); opacity:0; transition:opacity 0.3s ease;"
+     class="fixed z-50 flex items-center gap-3 bg-blue-600 text-white px-6 py-3.5 rounded-xl shadow-xl">
+  <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+  </svg>
+  <span class="text-sm font-semibold whitespace-nowrap">Application saved automatically!</span>
+</div>
+
+<div class="min-h-screen bg-gray-50">
+  <nav class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center justify-center w-9 h-9 bg-blue-600 rounded-lg">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <span class="font-semibold text-gray-900">PCP Credentialing</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <%= link_to "Dashboard", authenticated_root_path, class: "text-sm text-gray-500 hover:text-gray-900" %>
+        <%= link_to "All Credentials", pcp_credentials_path, class: "text-sm text-gray-500 hover:text-gray-900" %>
+        <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+            class: "text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition cursor-pointer" %>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">
+        <%= @credential.full_name.presence || "New Application" %>
+      </h1>
+      <p class="text-gray-500 mt-1">Changes are saved automatically as you type.</p>
+    </div>
+
+    <%= render "form", credential: @credential %>
+  </main>
+</div>
+
+<%# ── Auto-save script ────────────────────────────────────────── %>
+<script>
+(function () {
+  var form    = document.getElementById("pcp-credential-form");
+  var toast   = document.getElementById("autosave-toast");
+  var timer   = null;
+  var hideTimer = null;
+
+  if (!form || !toast) return;
+
+  function showToast() {
+    clearTimeout(hideTimer);
+    toast.style.display = "flex";
+    void toast.offsetWidth; // force reflow so transition fires
+    toast.style.opacity = "1";
+
+    hideTimer = setTimeout(function () {
+      toast.style.opacity = "0";
+      setTimeout(function () { toast.style.display = "none"; }, 300);
+    }, 5000);
+  }
+
+  function save() {
+    var formData = new FormData(form);
+    var csrf     = document.querySelector('meta[name="csrf-token"]');
+
+    fetch(form.action, {
+      method: "PATCH",
+      headers: {
+        "Accept": "application/json",
+        "X-CSRF-Token": csrf ? csrf.content : ""
+      },
+      body: formData
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.status === "saved") showToast();
+    })
+    .catch(function () {
+      // silently ignore network errors during auto-save
+    });
+  }
+
+  function scheduleAutoSave() {
+    clearTimeout(timer);
+    timer = setTimeout(save, 900);
+  }
+
+  // Listen on every input, select, and textarea inside the form
+  form.querySelectorAll("input, select, textarea").forEach(function (el) {
+    el.addEventListener("input",  scheduleAutoSave);
+    el.addEventListener("change", scheduleAutoSave);
+  });
+})();
+</script>

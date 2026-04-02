@@ -2,6 +2,8 @@ class PcpCredential < ApplicationRecord
   # ── Associations ──────────────────────────────────────────────
   belongs_to :pcp,       optional: true, class_name: "User", foreign_key: :pcp_id
   belongs_to :pcp_group, optional: true
+  has_many :work_histories, dependent: :destroy
+  accepts_nested_attributes_for :work_histories, allow_destroy: true, reject_if: :all_blank
 
   # ── Enums ─────────────────────────────────────────────────────
   enum :status, {

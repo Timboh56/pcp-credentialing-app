@@ -1,0 +1,144 @@
+<div class="min-h-screen bg-gray-50">
+  <nav class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center justify-center w-9 h-9 bg-blue-600 rounded-lg">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <span class="font-semibold text-gray-900">PCP Credentialing</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <%= link_to "All Credentials", pcp_credentials_path, class: "text-sm text-gray-500 hover:text-gray-900" %>
+        <%= link_to "Edit", edit_pcp_credential_path(@credential), class: "text-sm font-medium text-blue-600 hover:underline" %>
+        <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+            class: "text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition cursor-pointer" %>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+    <div class="flex items-start justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900"><%= @credential.full_name.presence || "Unnamed Practitioner" %></h1>
+        <p class="text-gray-500 mt-1">Submitted <%= @credential.created_at.strftime("%B %-d, %Y") %></p>
+      </div>
+      <% if @credential.status %>
+        <% status_colors = {
+          "pending" => "bg-yellow-100 text-yellow-800",
+          "submitted" => "bg-blue-100 text-blue-800",
+          "under_review" => "bg-purple-100 text-purple-800",
+          "approved" => "bg-green-100 text-green-800",
+          "denied" => "bg-red-100 text-red-800",
+          "expired" => "bg-gray-100 text-gray-600"
+        } %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= status_colors[@credential.status] || 'bg-gray-100 text-gray-600' %>">
+          <%= @credential.status.humanize %>
+        </span>
+      <% end %>
+    </div>
+
+    <%# Helper to render a detail row %>
+    <% def row(label, value) %>
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide"><%= label %></dt>
+        <dd class="mt-0.5 text-sm text-gray-900"><%= value.presence || "—" %></dd>
+      </div>
+    <% end %>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Personal Information</h2>
+      <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <%= row "First Name", @credential.first_name %>
+        <%= row "Middle Initial", @credential.middle_initial %>
+        <%= row "Last Name", @credential.last_name %>
+        <%= row "Degree", @credential.title_degree&.upcase %>
+        <%= row "Gender", @credential.gender&.humanize %>
+        <%= row "Date of Birth", @credential.practitioner_birth_date&.strftime("%B %-d, %Y") %>
+        <%= row "Email", @credential.email %>
+        <%= row "Phone", @credential.phone_number %>
+        <%= row "SSN", @credential.ssn %>
+        <%= row "Tax ID", @credential.tax_id %>
+      </dl>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Professional Information</h2>
+      <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <%= row "NPI", @credential.npi %>
+        <%= row "Practitioner #", @credential.practitioner_number %>
+        <%= row "Role", @credential.practitioner_role&.humanize %>
+        <%= row "Primary Specialty", @credential.speciality&.humanize&.titleize %>
+        <%= row "Secondary Specialty", @credential.secondary_speciality %>
+        <%= row "Taxonomy Code", @credential.taxonomy_code %>
+        <%= row "Years Practicing", @credential.years_practicing %>
+        <%= row "Age Range", [@credential.lowest_age_accepted, @credential.highest_age_accepted].compact.join(" – ") %>
+        <%= row "Accepting New Patients", @credential.accepting_new_patients? ? "Yes" : "No" %>
+        <%= row "Medical School", @credential.medical_school %>
+        <%= row "Residency", @credential.residency %>
+        <%= row "Primary Language", @credential.primary_language %>
+        <%= row "Secondary Language", @credential.secondary_language %>
+        <%= row "Third Language", @credential.third_language %>
+      </dl>
+      <% if @credential.work_history_notes.present? %>
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Work History / Notes</dt>
+          <dd class="mt-1 text-sm text-gray-900 whitespace-pre-line"><%= @credential.work_history_notes %></dd>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Licensure &amp; Certifications</h2>
+      <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <%= row "Medical License #", @credential.medical_license_number %>
+        <%= row "License State", @credential.medical_license_state&.upcase %>
+        <%= row "License Expiration", @credential.medical_license_expiration_date&.strftime("%b %-d, %Y") %>
+        <%= row "DEA Number", @credential.dea_number %>
+        <%= row "DEA State", @credential.dea_state&.upcase %>
+        <%= row "DEA Expiration", @credential.expiration_date&.strftime("%b %-d, %Y") %>
+        <%= row "Medicare ID", @credential.medicare_identifier %>
+        <%= row "Medicaid Number", @credential.medicaid_number %>
+        <%= row "Board Certified", @credential.board_certified_status? ? "Yes" : "No" %>
+        <%= row "Hospital Certification", @credential.hospital_certification_name %>
+        <%= row "Board Cert. Type", @credential.board_certification_type %>
+        <%= row "Board Cert. Effective", @credential.board_certification_effective_date&.strftime("%b %-d, %Y") %>
+        <%= row "Board Cert. Expiration", @credential.board_certification_expiration_date&.strftime("%b %-d, %Y") %>
+        <%= row "Board Cert. Type (Secondary)", @credential.board_certification_type_secondary %>
+        <%= row "Secondary Effective", @credential.board_certification_effective_date_secondary&.strftime("%b %-d, %Y") %>
+      </dl>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Malpractice Insurance</h2>
+      <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <%= row "Carrier", @credential.insurance_carrier %>
+        <%= row "Policy Number", @credential.insurance_policy_number %>
+        <%= row "Coverage Amount", @credential.insurance_coverage_amount ? number_to_currency(@credential.insurance_coverage_amount) : nil %>
+        <%= row "Aggregate Coverage", @credential.insurance_coverage_amount_aggregate ? number_to_currency(@credential.insurance_coverage_amount_aggregate) : nil %>
+        <%= row "Effective Date", @credential.insurance_effective_date %>
+        <%= row "Expiration Date", @credential.insurance_expiration_date&.strftime("%b %-d, %Y") %>
+      </dl>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">PCP Group</h2>
+      <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <%= row "Group NPI", @credential.pcp_group_npi %>
+        <%= row "Group Tax ID", @credential.pcp_group_tax_id %>
+        <%= row "Billing Address", @credential.pcp_group_billing_address %>
+        <%= row "Billing Phone", @credential.pcp_group_billing_phone %>
+      </dl>
+    </div>
+
+    <div class="flex items-center justify-between pt-2 pb-6">
+      <%= link_to "Edit", edit_pcp_credential_path(@credential),
+            class: "px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition" %>
+      <%= button_to "Delete", @credential, method: :delete,
+            data: { turbo_confirm: "Permanently delete this credential application?" },
+            class: "px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition cursor-pointer" %>
+    </div>
+  </main>
+</div>

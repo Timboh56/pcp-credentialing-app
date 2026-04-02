@@ -13,6 +13,22 @@
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+      function initFlatpickr() {
+        document.querySelectorAll("[data-datepicker]").forEach(function(el) {
+          if (el._flatpickr) return;
+          flatpickr(el, {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            disableMobile: false
+          });
+        });
+      }
+      document.addEventListener("DOMContentLoaded", initFlatpickr);
+      document.addEventListener("turbo:load", initFlatpickr);
+    </script>
   </head>
 
   <body class="bg-gray-50 min-h-screen">

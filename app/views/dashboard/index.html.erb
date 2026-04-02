@@ -14,6 +14,7 @@
 
       <div class="flex items-center gap-4">
         <span class="text-sm text-gray-500"><%= current_user.email %></span>
+        <%= link_to "Credentials", pcp_credentials_path, class: "text-sm font-medium text-gray-600 hover:text-gray-900" %>
         <%= button_to "Sign out", destroy_user_session_path, method: :delete,
             class: "text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition cursor-pointer" %>
       </div>
@@ -22,9 +23,18 @@
 
   <%# Main content %>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-      <p class="text-gray-500 mt-1">Welcome back, <%= current_user.email %></p>
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-500 mt-1">Welcome back, <%= current_user.email %></p>
+      </div>
+      <%= button_to pcp_credentials_path, params: { draft: true }, method: :post,
+            class: "inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition shadow-sm cursor-pointer" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Create PCP Credentialing Application
+      <% end %>
     </div>
 
     <%# Stat cards placeholder %>
