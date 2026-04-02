@@ -41,7 +41,7 @@ gem "aws-sdk-s3", require: false          # Active Storage → S3 (credentialing
 
 # ── Billing ──────────────────────────────────────────────────
 gem "pay", "~> 7.2"                       # Stripe/billing abstraction (Stripe, Lemon Squeezy)
-gem "stripe", "~> 12.0"
+gem "stripe", "~> 19.0"
 
 # ── Notifications ────────────────────────────────────────────
 gem "noticed", "~> 2.3"                  # Notification system (expiry alerts, review events)
