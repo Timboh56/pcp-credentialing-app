@@ -40,47 +40,47 @@
       <% end %>
     </div>
 
-    <%# Helper to render a detail row %>
-    <% def row(label, value) %>
-      <div>
-        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide"><%= label %></dt>
-        <dd class="mt-0.5 text-sm text-gray-900"><%= value.presence || "—" %></dd>
-      </div>
-    <% end %>
+    <%# Lambda helper — avoids ERB rendering HTML on method definition %>
+    <% row = ->(label, value) {
+      content_tag(:div) do
+        content_tag(:dt, label, class: "text-xs font-medium text-gray-500 uppercase tracking-wide") +
+        content_tag(:dd, value.presence || "—", class: "mt-0.5 text-sm text-gray-900")
+      end
+    } %>
 
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
       <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Personal Information</h2>
       <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
-        <%= row "First Name", @credential.first_name %>
-        <%= row "Middle Initial", @credential.middle_initial %>
-        <%= row "Last Name", @credential.last_name %>
-        <%= row "Degree", @credential.title_degree&.upcase %>
-        <%= row "Gender", @credential.gender&.humanize %>
-        <%= row "Date of Birth", @credential.practitioner_birth_date&.strftime("%B %-d, %Y") %>
-        <%= row "Email", @credential.email %>
-        <%= row "Phone", @credential.phone_number %>
-        <%= row "SSN", @credential.ssn %>
-        <%= row "Tax ID", @credential.tax_id %>
+        <%= row.call("First Name",    @credential.first_name) %>
+        <%= row.call("Middle Initial", @credential.middle_initial) %>
+        <%= row.call("Last Name",     @credential.last_name) %>
+        <%= row.call("Degree",        @credential.title_degree&.upcase) %>
+        <%= row.call("Gender",        @credential.gender&.humanize) %>
+        <%= row.call("Date of Birth", @credential.practitioner_birth_date&.strftime("%B %-d, %Y")) %>
+        <%= row.call("Email",         @credential.email) %>
+        <%= row.call("Phone",         @credential.phone_number) %>
+        <%= row.call("SSN",           @credential.ssn) %>
+        <%= row.call("Tax ID",        @credential.tax_id) %>
       </dl>
     </div>
 
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
       <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Professional Information</h2>
       <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
-        <%= row "NPI", @credential.npi %>
-        <%= row "Practitioner #", @credential.practitioner_number %>
-        <%= row "Role", @credential.practitioner_role&.humanize %>
-        <%= row "Primary Specialty", @credential.speciality&.humanize&.titleize %>
-        <%= row "Secondary Specialty", @credential.secondary_speciality %>
-        <%= row "Taxonomy Code", @credential.taxonomy_code %>
-        <%= row "Years Practicing", @credential.years_practicing %>
-        <%= row "Age Range", [@credential.lowest_age_accepted, @credential.highest_age_accepted].compact.join(" – ") %>
-        <%= row "Accepting New Patients", @credential.accepting_new_patients? ? "Yes" : "No" %>
-        <%= row "Medical School", @credential.medical_school %>
-        <%= row "Residency", @credential.residency %>
-        <%= row "Primary Language", @credential.primary_language %>
-        <%= row "Secondary Language", @credential.secondary_language %>
-        <%= row "Third Language", @credential.third_language %>
+        <%= row.call("NPI",                  @credential.npi) %>
+        <%= row.call("Practitioner #",       @credential.practitioner_number) %>
+        <%= row.call("Role",                 @credential.practitioner_role&.humanize) %>
+        <%= row.call("Primary Specialty",    @credential.speciality&.humanize&.titleize) %>
+        <%= row.call("Secondary Specialty",  @credential.secondary_speciality) %>
+        <%= row.call("Taxonomy Code",        @credential.taxonomy_code) %>
+        <%= row.call("Years Practicing",     @credential.years_practicing) %>
+        <%= row.call("Age Range",            [@credential.lowest_age_accepted, @credential.highest_age_accepted].compact.join(" – ")) %>
+        <%= row.call("Accepting New Patients", @credential.accepting_new_patients? ? "Yes" : "No") %>
+        <%= row.call("Medical School",       @credential.medical_school) %>
+        <%= row.call("Residency",            @credential.residency) %>
+        <%= row.call("Primary Language",     @credential.primary_language) %>
+        <%= row.call("Secondary Language",   @credential.secondary_language) %>
+        <%= row.call("Third Language",       @credential.third_language) %>
       </dl>
       <% if @credential.work_history_notes.present? %>
         <div class="mt-4 pt-4 border-t border-gray-100">
@@ -93,43 +93,43 @@
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
       <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Licensure &amp; Certifications</h2>
       <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
-        <%= row "Medical License #", @credential.medical_license_number %>
-        <%= row "License State", @credential.medical_license_state&.upcase %>
-        <%= row "License Expiration", @credential.medical_license_expiration_date&.strftime("%b %-d, %Y") %>
-        <%= row "DEA Number", @credential.dea_number %>
-        <%= row "DEA State", @credential.dea_state&.upcase %>
-        <%= row "DEA Expiration", @credential.expiration_date&.strftime("%b %-d, %Y") %>
-        <%= row "Medicare ID", @credential.medicare_identifier %>
-        <%= row "Medicaid Number", @credential.medicaid_number %>
-        <%= row "Board Certified", @credential.board_certified_status? ? "Yes" : "No" %>
-        <%= row "Hospital Certification", @credential.hospital_certification_name %>
-        <%= row "Board Cert. Type", @credential.board_certification_type %>
-        <%= row "Board Cert. Effective", @credential.board_certification_effective_date&.strftime("%b %-d, %Y") %>
-        <%= row "Board Cert. Expiration", @credential.board_certification_expiration_date&.strftime("%b %-d, %Y") %>
-        <%= row "Board Cert. Type (Secondary)", @credential.board_certification_type_secondary %>
-        <%= row "Secondary Effective", @credential.board_certification_effective_date_secondary&.strftime("%b %-d, %Y") %>
+        <%= row.call("Medical License #",        @credential.medical_license_number) %>
+        <%= row.call("License State",            @credential.medical_license_state&.upcase) %>
+        <%= row.call("License Expiration",       @credential.medical_license_expiration_date&.strftime("%b %-d, %Y")) %>
+        <%= row.call("DEA Number",               @credential.dea_number) %>
+        <%= row.call("DEA State",                @credential.dea_state&.upcase) %>
+        <%= row.call("DEA Expiration",           @credential.expiration_date&.strftime("%b %-d, %Y")) %>
+        <%= row.call("Medicare ID",              @credential.medicare_identifier) %>
+        <%= row.call("Medicaid Number",          @credential.medicaid_number) %>
+        <%= row.call("Board Certified",          @credential.board_certified_status? ? "Yes" : "No") %>
+        <%= row.call("Hospital Certification",   @credential.hospital_certification_name) %>
+        <%= row.call("Board Cert. Type",         @credential.board_certification_type) %>
+        <%= row.call("Board Cert. Effective",    @credential.board_certification_effective_date&.strftime("%b %-d, %Y")) %>
+        <%= row.call("Board Cert. Expiration",   @credential.board_certification_expiration_date&.strftime("%b %-d, %Y")) %>
+        <%= row.call("Board Cert. Type (Secondary)", @credential.board_certification_type_secondary) %>
+        <%= row.call("Secondary Effective",      @credential.board_certification_effective_date_secondary&.strftime("%b %-d, %Y")) %>
       </dl>
     </div>
 
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
       <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Malpractice Insurance</h2>
       <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
-        <%= row "Carrier", @credential.insurance_carrier %>
-        <%= row "Policy Number", @credential.insurance_policy_number %>
-        <%= row "Coverage Amount", @credential.insurance_coverage_amount ? number_to_currency(@credential.insurance_coverage_amount) : nil %>
-        <%= row "Aggregate Coverage", @credential.insurance_coverage_amount_aggregate ? number_to_currency(@credential.insurance_coverage_amount_aggregate) : nil %>
-        <%= row "Effective Date", @credential.insurance_effective_date %>
-        <%= row "Expiration Date", @credential.insurance_expiration_date&.strftime("%b %-d, %Y") %>
+        <%= row.call("Carrier",            @credential.insurance_carrier) %>
+        <%= row.call("Policy Number",      @credential.insurance_policy_number) %>
+        <%= row.call("Coverage Amount",    @credential.insurance_coverage_amount ? number_to_currency(@credential.insurance_coverage_amount) : nil) %>
+        <%= row.call("Aggregate Coverage", @credential.insurance_coverage_amount_aggregate ? number_to_currency(@credential.insurance_coverage_amount_aggregate) : nil) %>
+        <%= row.call("Effective Date",     @credential.insurance_effective_date) %>
+        <%= row.call("Expiration Date",    @credential.insurance_expiration_date&.strftime("%b %-d, %Y")) %>
       </dl>
     </div>
 
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
       <h2 class="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">PCP Group</h2>
       <dl class="grid grid-cols-2 sm:grid-cols-3 gap-5">
-        <%= row "Group NPI", @credential.pcp_group_npi %>
-        <%= row "Group Tax ID", @credential.pcp_group_tax_id %>
-        <%= row "Billing Address", @credential.pcp_group_billing_address %>
-        <%= row "Billing Phone", @credential.pcp_group_billing_phone %>
+        <%= row.call("Group NPI",        @credential.pcp_group_npi) %>
+        <%= row.call("Group Tax ID",     @credential.pcp_group_tax_id) %>
+        <%= row.call("Billing Address",  @credential.pcp_group_billing_address) %>
+        <%= row.call("Billing Phone",    @credential.pcp_group_billing_phone) %>
       </dl>
     </div>
 

@@ -1,5 +1,6 @@
 class PcpCredentialsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_two_factor_verification
   before_action :set_credential, only: %i[show edit update destroy]
 
   def index
