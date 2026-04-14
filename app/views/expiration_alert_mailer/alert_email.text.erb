@@ -1,0 +1,19 @@
+PCP Credentialing — Credential Expiration Alert
+================================================
+
+Provider: <%= @credential.full_name %>
+
+The following items require attention:
+
+<% @statuses.each do |s| %>
+[<%= { expired: "EXPIRED", expires_soon: "EXPIRES SOON", renew_soon: "RENEW SOON" }[s[:status]] %>] <%= s[:label] %>
+  Expiration date: <%= s[:date].strftime("%B %-d, %Y") %>
+<% if s[:days_until] >= 0 %>
+  Days remaining: <%= s[:days_until] %>
+<% else %>
+  Days overdue: <%= s[:days_until].abs %>
+<% end %>
+
+<% end %>
+---
+This is an automated daily alert from PCP Credentialing.

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { margin:0; padding:0; background:#f9fafb; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+    .wrapper { max-width:520px; margin:40px auto; background:#fff; border-radius:16px; border:1px solid #e5e7eb; overflow:hidden; }
+    .header { background:#2563eb; padding:24px 32px; }
+    .header h1 { margin:0; color:#fff; font-size:18px; font-weight:700; }
+    .header p { margin:4px 0 0; color:#bfdbfe; font-size:13px; }
+    .body { padding:32px; }
+    .intro { font-size:14px; color:#374151; margin:0 0 24px; line-height:1.6; }
+    .alert-row { border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+    .expired    { background:#fef2f2; border:1px solid #fecaca; }
+    .expires-soon { background:#fff7ed; border:1px solid #fed7aa; }
+    .renew-soon { background:#fefce8; border:1px solid #fde68a; }
+    .alert-label { font-size:13px; font-weight:700; margin:0 0 2px; }
+    .expired .alert-label    { color:#991b1b; }
+    .expires-soon .alert-label { color:#9a3412; }
+    .renew-soon .alert-label { color:#854d0e; }
+    .alert-meta { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:20px 32px; border-top:1px solid #f3f4f6; text-align:center; }
+    .footer p { font-size:11px; color:#9ca3af; margin:0; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <h1>Credential Expiration Alert</h1>
+      <p>PCP Credentialing — automated daily check</p>
+    </div>
+    <div class="body">
+      <p class="intro">
+        The following credential items for <strong><%= @credential.full_name %></strong>
+        require your attention:
+      </p>
+
+      <% @statuses.each do |s| %>
+        <% css_class = { expired: "expired", expires_soon: "expires-soon", renew_soon: "renew-soon" }[s[:status]] %>
+        <div class="alert-row <%= css_class %>">
+          <p class="alert-label">
+            <%= { expired: "Expired", expires_soon: "Expires Soon", renew_soon: "Renew Soon" }[s[:status]] %>
+            — <%= s[:label] %>
+          </p>
+          <p class="alert-meta">
+            Expiration date: <%= s[:date].strftime("%B %-d, %Y") %>
+            <% if s[:days_until] >= 0 %>
+              · <%= s[:days_until] %> day<%= s[:days_until] == 1 ? "" : "s" %> remaining
+            <% else %>
+              · <%= s[:days_until].abs %> day<%= s[:days_until].abs == 1 ? "" : "s" %> overdue
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+    <div class="footer">
+      <p>&copy; <%= Date.today.year %> PCP Credentialing — this is an automated message.</p>
+    </div>
+  </div>
+</body>
+</html>

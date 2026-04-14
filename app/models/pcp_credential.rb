@@ -125,4 +125,36 @@ class PcpCredential < ApplicationRecord
   def dea_expired?
     expiration_date.present? && expiration_date < Date.today
   end
+
+  # ── Expiration status helpers ──────────────────────────────────
+  EXPIRATION_CHECKS = {
+    "DEA"                   => :expiration_date,
+    "Medical License"       => :medical_license_expiration_date,
+    "Board Certification"   => :board_certification_expiration_date,
+    "Malpractice Insurance" => :insurance_expiration_date
+  }.freeze
+
+  # Returns array of hashes for any fields that are expired / expiring.
+  # { label:, date:, status: (:expired | :expires_soon | :renew_soon), days_until: }
+  def expiration_statuses
+    today = Date.today
+    EXPIRATION_CHECKS.map do |label, field|
+      date = public_send(field)
+      next if date.blank?
+
+      days = (date - today).to_i
+
+      status = if days < 0
+        :expired
+      elsif days <= 45
+        :expires_soon
+      elsif days <= 180
+        :renew_soon
+      end
+
+      next unless status
+
+      { label: label, date: date, status: status, days_until: days }
+    end
+  end
 end

@@ -41,6 +41,7 @@
               <th class="px-5 py-3 text-left font-semibold text-gray-600">NPI</th>
               <th class="px-5 py-3 text-left font-semibold text-gray-600">Specialty</th>
               <th class="px-5 py-3 text-left font-semibold text-gray-600">Status</th>
+              <th class="px-5 py-3 text-left font-semibold text-gray-600">Expiration Alerts</th>
               <th class="px-5 py-3 text-left font-semibold text-gray-600">Submitted</th>
               <th class="px-5 py-3"></th>
             </tr>
@@ -66,6 +67,17 @@
                     </span>
                   <% else %>
                     <span class="text-gray-400">—</span>
+                  <% end %>
+                </td>
+                <td class="px-5 py-3">
+                  <% cred.expiration_statuses.each do |s| %>
+                    <% badge = { expired: "bg-red-100 text-red-700", expires_soon: "bg-red-50 text-red-600", renew_soon: "bg-yellow-100 text-yellow-800" }[s[:status]] %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mr-1 mb-1 <%= badge %>">
+                      <%= s[:label] %>
+                    </span>
+                  <% end %>
+                  <% if cred.expiration_statuses.empty? %>
+                    <span class="text-gray-300">—</span>
                   <% end %>
                 </td>
                 <td class="px-5 py-3 text-gray-500"><%= cred.created_at.strftime("%b %-d, %Y") %></td>

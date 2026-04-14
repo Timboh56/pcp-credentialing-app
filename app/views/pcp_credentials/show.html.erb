@@ -40,6 +40,34 @@
       <% end %>
     </div>
 
+    <%# Expiration alerts — shown only when there are alerts %>
+    <% exp_statuses = @credential.expiration_statuses %>
+    <% if exp_statuses.any? %>
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">Expiration Alerts</h2>
+        <div class="space-y-2">
+          <% exp_statuses.each do |s| %>
+            <% colors = { expired: "bg-red-50 border-red-200 text-red-700", expires_soon: "bg-orange-50 border-orange-200 text-orange-700", renew_soon: "bg-yellow-50 border-yellow-200 text-yellow-700" } %>
+            <% label_text = { expired: "Expired", expires_soon: "Expires Soon", renew_soon: "Renew Soon" } %>
+            <div class="flex items-center justify-between px-4 py-2.5 rounded-lg border <%= colors[s[:status]] %>">
+              <div class="flex items-center gap-3">
+                <span class="text-xs font-bold uppercase tracking-wide"><%= label_text[s[:status]] %></span>
+                <span class="text-sm font-medium"><%= s[:label] %></span>
+              </div>
+              <div class="text-xs">
+                <%= s[:date].strftime("%b %-d, %Y") %>
+                <% if s[:days_until] >= 0 %>
+                  · <%= s[:days_until] %> day<%= s[:days_until] == 1 ? "" : "s" %> left
+                <% else %>
+                  · <%= s[:days_until].abs %> day<%= s[:days_until].abs == 1 ? "" : "s" %> overdue
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <%# Lambda helper — avoids ERB rendering HTML on method definition %>
     <% row = ->(label, value) {
       content_tag(:div) do

@@ -1,0 +1,11 @@
+:queues:
+  - [default, 2]
+  - [mailers, 1]
+
+:scheduler:
+  :schedule:
+    expiration_check_job:
+      cron: '0 8 * * *'
+      description: "Daily check for expiring PCP credentials (runs at 8 AM)"
+      class: ExpirationCheckJob
+      queue: default
