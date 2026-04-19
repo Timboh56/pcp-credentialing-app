@@ -55,7 +55,7 @@ gem "money-rails", "~> 1.15"            # If you ever surface pricing/fees
 
 group :development, :test do
   gem "debug", platforms: %i[mri mingw x64_mingw]
-  gem "rspec-rails", "~> 6.1"
+  gem "rspec-rails", "~> 7.1"
   gem "factory_bot_rails", "~> 6.4"
   gem "faker", "~> 3.2"
   gem "shoulda-matchers", "~> 6.0"
