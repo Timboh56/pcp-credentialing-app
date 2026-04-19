@@ -155,6 +155,6 @@ class PcpCredential < ApplicationRecord
       next unless status
 
       { label: label, date: date, status: status, days_until: days }
-    end
+    end.compact
   end
 end
